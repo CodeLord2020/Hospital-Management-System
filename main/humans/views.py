@@ -83,3 +83,20 @@ class DoctorDeleteView(generics.DestroyAPIView):
 
     def get_queryset(self):
         return Doctor.objects.filter(user=self.request.user)
+    
+
+from management.serializers import AppointmentListSerializer
+
+class DoctorPatientsAPIView(generics.ListAPIView):
+    serializer_class = PatientSerializer 
+
+    def get_queryset(self):
+        doctor_id = self.kwargs['pk']
+        return Doctor.objects.get(pk=doctor_id).my_patients()
+
+class DoctorAppointmentsAPIView(generics.ListAPIView):
+    serializer_class = AppointmentListSerializer 
+    def get_queryset(self):
+        doctor_id = self.kwargs['pk']
+        return Doctor.objects.get(pk=doctor_id).my_appointments()
+

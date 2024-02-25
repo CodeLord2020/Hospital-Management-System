@@ -34,7 +34,7 @@ class AppointmentListSerializer(serializers.ModelSerializer):
     doctor_name = serializers.CharField(source='doctor.user.get_full_name', read_only=True)
     class Meta:
         model = Appointment
-        fields = ['id', 'patient_name', 'doctor_name','patient', 'appointment_date', 'details']
+        fields = ['id', 'patient_name', 'doctor_name', 'appointment_date', 'details']
 
     def get_patient_name(self, obj):
         return obj.patient.user.get_full_name
@@ -51,7 +51,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Appointment
-        fields = ['id', 'patient', 'doctor', 'appointment_date', 'reason', 'is_confirmed', 'notes', 'patient_name', 'doctor_name']
+        fields = ['id', 'doctor', 'appointment_date', 'reason', 'is_confirmed', 'notes', 'patient_name', 'doctor_name']
 
     def get_patient_name(self, obj):
         return obj.patient.user.get_full_name

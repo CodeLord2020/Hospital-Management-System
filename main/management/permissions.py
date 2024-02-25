@@ -25,7 +25,7 @@ class IsDoctorOrReadOnly(permissions.BasePermission):
 
 class IsADoctor(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and ( request.user.is_medical_staff or request.user.is_doctor )
+        return request.user.is_authenticated and  request.user.is_medical_staff and request.user.is_doctor 
     
 
 class IsAMedicalStaff(permissions.BasePermission):

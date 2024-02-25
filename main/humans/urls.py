@@ -23,3 +23,10 @@ urlpatterns = [
 
 
 ]
+
+from .views import DoctorPatientsAPIView, DoctorAppointmentsAPIView
+
+urlpatterns += [
+    path('doctor/<int:pk>/patients/', DoctorPatientsAPIView.as_view(), name='doctor-patients'),
+    path('doctor/<int:pk>/appointments/', DoctorAppointmentsAPIView.as_view(), name='doctor-appointments'),
+]

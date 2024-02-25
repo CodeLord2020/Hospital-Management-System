@@ -67,7 +67,7 @@ class AppointmentListView(generics.ListAPIView):
     Accessible to all medical staff.
     """
     serializer_class = AppointmentListSerializer
-    permission_classes = [permissions.IsAuthenticated,IsAMedicalStaff]  # Customize based on your needs
+    permission_classes = [permissions.IsAuthenticated,IsADoctor]  
 
     def get_queryset(self):
         return Appointment.objects.all()
