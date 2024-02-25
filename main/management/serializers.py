@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import MedicalHistory, Appointment, TestResult, Insurance
+from humans.models import Patient
 
 class MedicalHistoryListSerializer(serializers.ModelSerializer):
     details = serializers.HyperlinkedIdentityField(view_name='medical-history-details', lookup_field='pk')
@@ -59,6 +60,35 @@ class AppointmentSerializer(serializers.ModelSerializer):
     def get_doctor_name(self, obj):
         return obj.doctor.get_full_name
     
+class AppointmentCreateSerializer(serializers.ModelSerializer):
+    patient_name = serializers.CharField(source='patient.user.get_full_name', read_only=True)
+    doctor_name = serializers.CharField(source='doctor.user.get_full_name', read_only=True)
+    patient = serializers.IntegerField
+
+    class Meta:
+        model = Appointment
+        fields = ['doctor', 'patient', 'appointment_date', 'reason', 'is_confirmed', 'notes', 'patient_name', 'doctor_name']
+
+    def get_patient_name(self, obj):
+        return obj.patient.user.get_full_name
+
+    def get_doctor_name(self, obj):
+        return obj.doctor.get_full_name
+    
+    # def create(self, validated_data):
+    #     print("At least got here")
+    #     get_patient_id = validated_data.get("patient")
+    #     get_patient_id = get_patient_id.id
+    #     print(f"patient_id: {get_patient_id}")
+    #     appointment_date = validated_data.get('appointment_date')
+    #     if get_patient_id:
+    #         patient_instance = Patient.objects.get(id = get_patient_id)
+    #         print(f"patient_username: {patient_instance}")
+    #         if patient_instance:
+    #             patient_instance.last_appointment = patient_instance.next_appointment
+    #             patient_instance.next_appointment = appointment_date
+    #             patient_instance.save()
+    #     return super().create(validated_data)
 
 class TestResultListSerializer(serializers.ModelSerializer):
 

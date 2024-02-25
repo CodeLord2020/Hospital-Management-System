@@ -6,9 +6,10 @@ from .views import (
     MedicalHistoryUpdateView,
     MedicalHistoryDeleteView,
 
+    AppointmentCreateView,
     AppointmentListView,
     AppointmentRetrieveView,
-    AppointmentScheduleView,
+    # AppointmentScheduleView,
     AppointmentUpdateView,
 
     TestResultListAPIView,
@@ -35,7 +36,7 @@ urlpatterns = [
 
     path('appointments/', AppointmentListView.as_view(), name='appointment-list'),
     path('appointments/<int:pk>/', AppointmentRetrieveView.as_view(), name='appointment-detail'),
-    path('appointments/schedule/', AppointmentScheduleView.as_view(), name='appointment-schedule'),
+    path('appointments/schedule/', AppointmentCreateView.as_view(), name='appointment-schedule'),
     path('appointments/<int:pk>/update/', AppointmentUpdateView.as_view(), name='appointment-update'),
 
     path('test-results/', TestResultListAPIView.as_view(), name='testresult-list'),

@@ -29,11 +29,12 @@ class Doctor(models.Model):
 
     
     def __str__(self):
-        # return f"Doctor {self.id}"
-        if self.user:
-            return self.user.get_full_name
-        else:
-            return f"Doctor {self.id}"
+        # return str(self.id)
+        return f"Doctor {self.id}"
+        # if self.user:
+        #     return self.user.get_full_name
+        # else:
+        #     return f"Doctor {self.id}"
 
 
 class Patient(models.Model):
@@ -72,4 +73,8 @@ class Patient(models.Model):
         return self.user.get_full_name
 
     def __str__(self):
+        # return str(self.id)
         return self.user.get_full_name
+    
+    class Meta:
+        ordering = ['next_appointment']

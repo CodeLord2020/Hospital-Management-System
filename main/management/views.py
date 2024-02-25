@@ -1,11 +1,15 @@
 from django.shortcuts import render
 from datetime import timezone
+from humans.models import Patient
+import logging
 from .models import MedicalHistory, Appointment, TestResult, Insurance
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics, permissions
 from rest_framework.permissions import IsAuthenticated
+from .paginator import appointmennt_paginator
 from .permissions import IsADoctor, IsAMedicalStaff, IsDoctorOrReadOnly
 from .serializers import (MedicalHistoryListSerializer, MedicalHistorySerializer,
-                           AppointmentListSerializer, AppointmentSerializer,
+                           AppointmentListSerializer, AppointmentSerializer, AppointmentCreateSerializer,
                              TestResultSerializer, TestResultListSerializer, TestResultListUpdateSerializer,
                               InsuranceListSerializer, InsuranceSerializer )
 # Create your views here.
@@ -58,7 +62,44 @@ class MedicalHistoryDeleteView(generics.DestroyAPIView):
     serializer_class = MedicalHistorySerializer
     permission_classes = [permissions.IsAuthenticated, IsADoctor]
 
+class AppointmentCreateView(generics.CreateAPIView):
+    serializer_class = AppointmentCreateSerializer
+    permission_classes = [IsAuthenticated, IsAMedicalStaff]
+    
+    
+    def perform_create(self, serializer):
+        print("At least got here")
+        get_patient_id = self.request.data.get("patient", None)
+        print(f"patient_id: {get_patient_id}")
+        appointment_date = self.request.data.get('appointment_date')
+        if get_patient_id:
+            try:
+                patient_instance = Patient.objects.get(id = get_patient_id)
+                print(f"patient_username: {patient_instance}")
+                if patient_instance:
+                    patient_instance.last_appointment = patient_instance.next_appointment
+                    print (f'patient {patient_instance.last_appointment}')
+                    patient_instance.next_appointment = appointment_date
+                    print (f'patient {patient_instance.next_appointment}')
+                    patient_instance.save()
+            except ObjectDoesNotExist:
+                logging.error("Patients model instance not found")
 
+        serializer.save()
+
+    # def post(self, request, *args, **kwargs):
+    #     print("At least got here (views)")
+    #     get_patient_id = self.request.data.get("patient", None)
+    #     print(f"(views)patient_id: {get_patient_id}")
+    #     appointment_date = self.request.data.get('appointment_date')
+    #     if get_patient_id:
+    #         patient_instance = Patient.objects.get(id = get_patient_id)
+    #         print(f"patient_username(views): {patient_instance}")
+    #         if patient_instance:
+    #             patient_instance.last_appointment = patient_instance.next_appointment
+    #             patient_instance.next_appointment = appointment_date
+    #     return super().post(request, *args, **kwargs)
+    
 
 
 class AppointmentListView(generics.ListAPIView):
@@ -68,6 +109,7 @@ class AppointmentListView(generics.ListAPIView):
     """
     serializer_class = AppointmentListSerializer
     permission_classes = [permissions.IsAuthenticated,IsADoctor]  
+    pagination_class = appointmennt_paginator
 
     def get_queryset(self):
         return Appointment.objects.all()
