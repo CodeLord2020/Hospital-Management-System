@@ -15,52 +15,9 @@ from .serializers import (MedicalHistoryListSerializer, MedicalHistorySerializer
 # Create your views here.
 
 
-class MedicalHistoryListView(generics.ListCreateAPIView):
-    """
-    List all medical histories for a patient or create a new medical history entry.
-    """
-    serializer_class = MedicalHistoryListSerializer
-    permission_classes = [IsAuthenticated, IsAMedicalStaff]
 
-class MedicalHistoryDetailsView(generics.RetrieveAPIView):
-    """
-    Retrieve details of a specific medical history entry.
-    Only accessible to medical staff.
-    """
-    queryset = MedicalHistory.objects.all()
-    serializer_class = MedicalHistorySerializer
-    permission_classes = [permissions.IsAuthenticated, IsAMedicalStaff]
 
-class MedicalHistoryCreateView(generics.CreateAPIView):
-    """
-    Create a new medical history entry.
-    Only accessible to medical staff.
-    """
-    queryset = MedicalHistory.objects.all()
-    serializer_class = MedicalHistorySerializer
-    permission_classes = [permissions.IsAuthenticated, IsAMedicalStaff]
 
-    def perform_create(self, serializer):
-        # Automatically set the doctor field to the current user (assuming doctors are users)
-        serializer.save(doctor=self.request.user)
-
-class MedicalHistoryUpdateView(generics.UpdateAPIView):
-    """
-    Update a specific medical history entry.
-    Only accessible to medical staff.
-    """
-    queryset = MedicalHistory.objects.all()
-    serializer_class = MedicalHistorySerializer
-    permission_classes = [permissions.IsAuthenticated, IsAMedicalStaff]
-
-class MedicalHistoryDeleteView(generics.DestroyAPIView):
-    """
-    Delete a specific medical history entry.
-    Only accessible to medical staff.
-    """
-    queryset = MedicalHistory.objects.all()
-    serializer_class = MedicalHistorySerializer
-    permission_classes = [permissions.IsAuthenticated, IsADoctor]
 
 class AppointmentCreateView(generics.CreateAPIView):
     serializer_class = AppointmentCreateSerializer
@@ -86,6 +43,7 @@ class AppointmentCreateView(generics.CreateAPIView):
                 logging.error("Patients model instance not found")
 
         serializer.save()
+
 
     # def post(self, request, *args, **kwargs):
     #     print("At least got here (views)")
@@ -142,10 +100,103 @@ class AppointmentUpdateView(generics.UpdateAPIView):
 
 
 
+
+
+
+
+class InsuranceList(generics.ListAPIView):
+    queryset = Insurance.objects.all()
+    serializer_class = InsuranceListSerializer
+    permission_classes = [IsAuthenticated, IsAMedicalStaff]
+
+
+class InsuranceDetail(generics.RetrieveAPIView):
+    queryset = Insurance.objects.all()
+    serializer_class = InsuranceSerializer
+    permission_classes = [IsAuthenticated, IsAMedicalStaff]
+    
+
+class InsuranceCreate(generics.CreateAPIView):
+    queryset = Insurance.objects.all()
+    serializer_class = InsuranceSerializer
+    permission_classes = [IsAuthenticated, IsAMedicalStaff]
+
+
+class InsuranceUpdate(generics.UpdateAPIView):
+    queryset = Insurance.objects.all()
+    serializer_class = InsuranceSerializer
+    permission_classes = [IsAuthenticated, IsAMedicalStaff]
+
+
+class InsuranceDelete(generics.DestroyAPIView):
+    queryset = Insurance.objects.all()
+    serializer_class = InsuranceSerializer
+    permission_classes = [IsAuthenticated, IsAMedicalStaff]
+
+
+
+
+
+
+
+class MedicalHistoryListView(generics.ListCreateAPIView):
+    """
+    List all medical histories for a patient or create a new medical history entry.
+    """
+    serializer_class = MedicalHistoryListSerializer
+    permission_classes = [IsAuthenticated, IsAMedicalStaff]
+
+class MedicalHistoryDetailsView(generics.RetrieveAPIView):
+    """
+    Retrieve details of a specific medical history entry.
+    Only accessible to medical staff.
+    """
+    queryset = MedicalHistory.objects.all()
+    serializer_class = MedicalHistorySerializer
+    permission_classes = [permissions.IsAuthenticated, IsAMedicalStaff]
+
+class MedicalHistoryCreateView(generics.CreateAPIView):
+    """
+    Create a new medical history entry.
+    Only accessible to medical staff.
+    """
+    queryset = MedicalHistory.objects.all()
+    serializer_class = MedicalHistorySerializer
+    permission_classes = [permissions.IsAuthenticated, IsAMedicalStaff]
+
+    def perform_create(self, serializer):
+        # Automatically set the doctor field to the current user (assuming doctors are users)
+        serializer.save(doctor=self.request.user)
+
+class MedicalHistoryUpdateView(generics.UpdateAPIView):
+    """
+    Update a specific medical history entry.
+    Only accessible to medical staff.
+    """
+    queryset = MedicalHistory.objects.all()
+    serializer_class = MedicalHistorySerializer
+    permission_classes = [permissions.IsAuthenticated, IsAMedicalStaff]
+
+class MedicalHistoryDeleteView(generics.DestroyAPIView):
+    """
+    Delete a specific medical history entry.
+    Only accessible to medical staff.
+    """
+    queryset = MedicalHistory.objects.all()
+    serializer_class = MedicalHistorySerializer
+    permission_classes = [permissions.IsAuthenticated, IsADoctor]
+
+
+
+
+
+
+
 class TestResultListAPIView(generics.ListAPIView):
 
     serializer_class = TestResultListSerializer
     permission_classes = [IsAuthenticated, IsAMedicalStaff]
+    queryset = TestResult.objects.all
 
     def get_queryset(self):
 
@@ -155,7 +206,7 @@ class TestResultListAPIView(generics.ListAPIView):
         if patient_id:
             return TestResult.objects.filter(medical_history__patient__id=patient_id)
         else:
-            return TestResult.objects.all
+            return TestResult.objects.all()
 
 
 class TestResultDetailAPIView(generics.RetrieveAPIView):
@@ -199,34 +250,5 @@ class TestResultDeleteAPIView(generics.DestroyAPIView):
 
     
 
-
-class InsuranceList(generics.ListAPIView):
-    queryset = Insurance.objects.all()
-    serializer_class = InsuranceListSerializer
-    permission_classes = [IsAuthenticated, IsAMedicalStaff]
-
-
-class InsuranceDetail(generics.RetrieveAPIView):
-    queryset = Insurance.objects.all()
-    serializer_class = InsuranceSerializer
-    permission_classes = [IsAuthenticated, IsAMedicalStaff]
-    
-
-class InsuranceCreate(generics.CreateAPIView):
-    queryset = Insurance.objects.all()
-    serializer_class = InsuranceSerializer
-    permission_classes = [IsAuthenticated, IsAMedicalStaff]
-
-
-class InsuranceUpdate(generics.UpdateAPIView):
-    queryset = Insurance.objects.all()
-    serializer_class = InsuranceSerializer
-    permission_classes = [IsAuthenticated, IsAMedicalStaff]
-
-
-class InsuranceDelete(generics.DestroyAPIView):
-    queryset = Insurance.objects.all()
-    serializer_class = InsuranceSerializer
-    permission_classes = [IsAuthenticated, IsAMedicalStaff]
 
 

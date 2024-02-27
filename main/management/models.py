@@ -102,34 +102,40 @@ class MedicalFacility(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+
+    
 
 class MedicalHistory(models.Model):
     patient = models.ForeignKey('humans.Patient', on_delete=models.CASCADE)
     date_recorded = models.DateTimeField(auto_now_add=True)
+    symtoms = models.TextField(null = True)
     diagnosis = models.TextField()
-    prescription = models.TextField()
-    doctor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='medical_records')
+    medication_name = models.TextField()
+    instructions = models.TextField(null = True)
+    
+    doctor = models.ForeignKey('humans.Doctor', on_delete=models.SET_NULL, null=True, related_name='medical_records')
+
 
     def __str__(self):
         return f"Medical history for {self.patient.user.get_full_name()} recorded on {self.date_recorded}"
 
 
-class Prescription(models.Model):
-    medical_history = models.ForeignKey(MedicalHistory, on_delete=models.CASCADE, related_name='prescriptions')
-    medication_name = models.CharField(max_length=100)
-    dosage = models.CharField(max_length=50)
-    instructions = models.TextField()
 
-    def __str__(self):
-        return f"Prescription for {self.medical_history.patient.user.get_full_name()} - {self.medication_name}"
-    
 
 class TestResult(models.Model):
-    medical_history = models.ForeignKey(MedicalHistory, on_delete=models.CASCADE)
+    patient = models.ForeignKey('humans.Patient', on_delete=models.CASCADE, null = True)
+    # medical_history = models.ForeignKey(MedicalHistory, on_delete=models.CASCADE)
     test_name = models.CharField(max_length=100)
+    test_approved_by = models.CharField(max_length=100, null = True)
+    tested_by = models.CharField(max_length=100, null = True)
+    lab_name = models.CharField(max_length=100, null = True)
+
     result = models.TextField()
+    
     date_added = models.DateTimeField(auto_now_add=True, null= True)
     date_updated = models.DateTimeField(auto_now=True, null= True)
 
     def __str__(self):
-        return f"Test result for {self.medical_history.patient.user.get_full_name()} - {self.test_name}"
+        return f"{self.test_name} test result for {self.patient.get_full_name()}"
