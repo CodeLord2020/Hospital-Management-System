@@ -11,17 +11,14 @@ Appointments: Schedule, reschedule, and manage appointments for patients with do
 Patients: Register, update, and retrieve patient information, including medical history and allergies.
 Doctors: Manage doctor profiles, schedules, and specializations.
 Departments: Create, update, and manage hospital departments with their respective services and staff.
-Beds & Wards: Track bed availability, assign patients to wards, and manage ward transfers.
-Inventory: Manage medical supplies, equipment, and medications with real-time stock levels.
 Billing & Insurance: Handle patient billing, insurance claims, and payment processing.
-Reports & Analytics: Generate insightful reports on patient demographics, appointment trends, department performance, and more.
 
 
 API Design:
 RESTful architecture for intuitive API interaction.
 Hyperlinked relationships for easy navigation between resources.
 Authentication and authorization for secure access control.
-Validation and error handling for robust data integrity.
+Validation and error handling 
 Extensive documentation for smooth integration and adoption
 
 
@@ -36,4 +33,4 @@ Scalability: Accommodate growing patient volume and hospital complexity.
 Target Audience:
 Hospitals, clinics, and healthcare institutions of all sizes.
 Developers looking for a powerful and flexible backend solution.
-Healthcare IT professionals seeking to modernize their infrastructure.
+Healthcare IT professionals
