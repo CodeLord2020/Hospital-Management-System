@@ -34,9 +34,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ["localhost", 
+                 "127.0.0.1", 
+                 'macsauce-chat.onrender.com', 
+                 "*.onrender.com"]
 
 AUTH_USER_MODEL = 'authentication.User'
 
@@ -54,6 +59,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     'authentication',
+    "corsheaders",
     'humans',
     'management',
 
@@ -96,6 +102,19 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
+
+import dj_database_url
+
+DATABASE_URL = "postgres://avnadmin:AVNS_1MzjrsHJlorwFAPdPb5@hms-macsauce-hms.a.aivencloud.com:11365/defaultdb?sslmode=require"
+# DATABASE_URL = os.environ.get("DATABASE_URL")
+
+# DATABASES = {
+
+#     "default": dj_database_url.parse(DATABASE_URL)
+
+# }
+print(DATABASE_URL)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -212,6 +231,10 @@ SIMPLE_JWT = {
     # 'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+CSRF_TRUSTED_ORIGINS = [ 
+    'https://*.railway.app',
+    'https://*.onrender.com'
+]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

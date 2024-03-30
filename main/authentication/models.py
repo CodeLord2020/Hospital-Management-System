@@ -1,5 +1,5 @@
 from django.db import models
-import uuid
+
 
 
 # Create your models here.
@@ -32,7 +32,6 @@ class Usermanager(BaseUserManager):
     
 
 class User(AbstractBaseUser, PermissionsMixin):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
     user_name = models.CharField(max_length=50, null=False, blank= False)
     surname = models.CharField(max_length=50, null=False, blank= False)
