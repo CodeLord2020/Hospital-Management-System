@@ -40,7 +40,7 @@ DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = ["localhost", 
                  "127.0.0.1", 
-                 'macsauce-chat.onrender.com', 
+                 'hospital-management-system-6j4p.onrender.com', 
                  "*.onrender.com"]
 
 AUTH_USER_MODEL = 'authentication.User'
@@ -230,6 +230,8 @@ SIMPLE_JWT = {
     # 'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     # 'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [ 
     'https://*.railway.app',
