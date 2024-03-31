@@ -1,0 +1,9 @@
+This is very important, so that u won't be troubled by migrations ad cirular imports error.
+steps to follow:
+1. makemigration authentication
+2. migrate authentication
+3. makemigration humans management
+4. migrate
+
+
+Author:Rasheed Macsauce Codelord

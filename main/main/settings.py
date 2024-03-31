@@ -34,7 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG')
 
 # ALLOWED_HOSTS = []
 
@@ -105,22 +105,22 @@ WSGI_APPLICATION = 'main.wsgi.application'
 
 
 import dj_database_url
-
-DATABASE_URL = "postgres://avnadmin:AVNS_1MzjrsHJlorwFAPdPb5@hms-macsauce-hms.a.aivencloud.com:11365/defaultdb?sslmode=require"
+DATABASE_URL = "postgres://jcyudqho:MWMTPFIjC0NZBILY_NkV-yg-FecdvcR3@cornelius.db.elephantsql.com/jcyudqho"
+# DATABASE_URL = "postgres://avnadmin:AVNS_1MzjrsHJlorwFAPdPb5@hms-macsauce-hms.a.aivencloud.com:11365/defaultdb?sslmode=require"
 # DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# DATABASES = {
-
-#     "default": dj_database_url.parse(DATABASE_URL)
-
-# }
-print(DATABASE_URL)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+
+    "default": dj_database_url.parse(DATABASE_URL)
+
 }
+# print(DATABASE_URL)
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation

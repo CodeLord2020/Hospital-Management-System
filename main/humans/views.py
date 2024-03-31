@@ -3,11 +3,18 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView, DestroyAPIView, UpdateAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework import status, generics
+
+import logging
+from .models import Appointment
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import generics, permissions
+from rest_framework.permissions import IsAuthenticated
+from .paginator import appointmennt_paginator
 from rest_framework.renderers import JSONOpenAPIRenderer
 # Create your views here.
 from .models import Patient, Doctor
 from .permissions import IsDoctorOrReadOnly, IsAMedicalStaff, IsADoctor, IsFinalAuthority
-from .serializers import PatientSerializer,ListPatientSerializer, DoctorListSerializer, DoctorSerializer
+from .serializers import PatientSerializer,ListPatientSerializer, DoctorListSerializer, DoctorSerializer, AppointmentCreateSerializer, AppointmentListSerializer, AppointmentSerializer
 
 
 
@@ -85,8 +92,6 @@ class DoctorDeleteView(generics.DestroyAPIView):
         return Doctor.objects.filter(user=self.request.user)
     
 
-from management.serializers import AppointmentListSerializer
-
 class DoctorPatientsAPIView(generics.ListAPIView):
     serializer_class = PatientSerializer 
 
@@ -100,3 +105,69 @@ class DoctorAppointmentsAPIView(generics.ListAPIView):
         doctor_id = self.kwargs['pk']
         return Doctor.objects.get(pk=doctor_id).my_appointments()
 
+
+
+class AppointmentCreateView(generics.CreateAPIView):
+    serializer_class = AppointmentCreateSerializer
+    permission_classes = [IsAuthenticated, IsAMedicalStaff]
+    
+    
+    def perform_create(self, serializer):
+        print("At least got here")
+        get_patient_id = self.request.data.get("patient", None)
+        print(f"patient_id: {get_patient_id}")
+        appointment_date = self.request.data.get('appointment_date')
+        if get_patient_id:
+            try:
+                patient_instance = Patient.objects.get(id = get_patient_id)
+                print(f"patient_username: {patient_instance}")
+                if patient_instance:
+                    patient_instance.last_appointment = patient_instance.next_appointment
+                    print (f'patient {patient_instance.last_appointment}')
+                    patient_instance.next_appointment = appointment_date
+                    print (f'patient {patient_instance.next_appointment}')
+                    patient_instance.save()
+            except ObjectDoesNotExist:
+                logging.error("Patients model instance not found")
+
+        serializer.save()
+
+
+
+class AppointmentListView(generics.ListAPIView):
+    """
+    List all appointments for a patient or doctor.
+    Accessible to all medical staff.
+    """
+    serializer_class = AppointmentListSerializer
+    permission_classes = [permissions.IsAuthenticated,IsADoctor]  
+    pagination_class = appointmennt_paginator
+
+    def get_queryset(self):
+        return Appointment.objects.all()
+
+class AppointmentRetrieveView(generics.RetrieveAPIView):
+    """
+    Retrieve details of a specific appointment.
+    Accessible to all medical staff.
+    """
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAMedicalStaff]
+
+class AppointmentScheduleView(generics.CreateAPIView):
+    """
+    Schedule a new appointment.
+    Accessible to all medical staff.
+    """
+    serializer_class = AppointmentSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAMedicalStaff]
+
+class AppointmentUpdateView(generics.UpdateAPIView):
+    """
+    Update an existing appointment.
+    Accessible to all medical staff.
+    """
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAMedicalStaff]

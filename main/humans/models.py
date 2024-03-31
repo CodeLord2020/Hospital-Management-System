@@ -78,3 +78,53 @@ class Patient(models.Model):
     
     class Meta:
         ordering = ['next_appointment']
+
+
+
+class Appointment(models.Model):
+    # patient = models.ForeignKey('humans.Patient', related_name = 'patient_appointments', on_delete=models.CASCADE)
+    # doctor = models.ForeignKey('humans.Doctor', related_name= 'doctor_appointments', on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, related_name = 'patient_appointments', on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, related_name= 'doctor_appointments', on_delete=models.CASCADE)
+    appointment_date = models.DateTimeField()
+    reason = models.TextField()
+    is_confirmed = models.BooleanField(default=False)
+    notes = models.TextField(blank=True, null=True)
+
+
+
+    class Meta:
+        ordering = ['appointment_date']
+
+
+    def __str__(self):
+        return f"Appointment for {self.patient.user.get_full_name} with {self.doctor.user.get_full_name} on {self.appointment_date}"
+    
+    
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
+@receiver(pre_save, sender=Appointment)
+def send_appointment_mail_updates(sender, instance, **kwargs):
+    # Get the existing appointment instance from the database
+    try:
+        old_instance = Appointment.objects.get(pk=instance.pk)
+    except Appointment.DoesNotExist:
+        # If the instance is new and doesn't exist in the database yet, do nothing
+        return
+
+    email = instance.patient.email
+    new_date = instance.appointment_date
+    old_date = old_instance.appointment_date
+    doc = instance.doctor.get_full_name()
+
+    if instance.pk is None:
+        # This is a new appointment
+        send_appointment_mail(email, new_date, doc)
+        print("Appointment mail sent")
+    elif new_date != old_date:
+        # The appointment_date field has been changed
+        send_appointment_change_mail(email, new_date, doc)
+        print("Appointment update mail sent")
+    else:
+        # No changes in the appointment_date field
+        pass
