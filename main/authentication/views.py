@@ -17,8 +17,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
     throttle_scope = 'login'
 
 
-class RegistrationAPIView(generics.GenericAPIView):
 
+class RegistrationAPIView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
     
     def post(self, request, *args, **kwargs):
@@ -35,7 +35,8 @@ class RegistrationAPIView(generics.GenericAPIView):
             data['access'] = str(refresh.access_token)
 
         return Response(data, status.HTTP_201_CREATED)
-    
+
+
 
 class VerifyOTPAPIView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
